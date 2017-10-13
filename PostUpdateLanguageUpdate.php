@@ -16,7 +16,8 @@ class PostUpdateLanguageUpdate {
 	 * @param PackageEvent $event
 	 */
 	public static function updateT10ns(PackageEvent $event) {
-		$installedPackage = $event->getOperation()->getPackage();
+		//$installedPackage = $event->getOperation()->getPackage();
+		$installedPackage = $event->getOperation();
 
 		var_dump( $installedPackage );
 	}
@@ -25,7 +26,8 @@ class PostUpdateLanguageUpdate {
 	 * @param PackageEvent $event
 	 */
 	public static function removeT10ns(PackageEvent $event) {
-		$installedPackage = $event->getOperation()->getPackage();
+		//$installedPackage = $event->getOperation()->getPackage();
+		$installedPackage = $event->getOperation();
 
 		var_dump( $installedPackage );
 	}
