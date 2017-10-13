@@ -1,0 +1,25 @@
+{
+  "name": "ac-components/composer-plugin-language-update",
+  "description": "Update translations for a WP plugin after composer update.",
+  "keywords": [
+    "WordPress"
+  ],
+  "homepage": "https://angrycreative.com",
+  "version": "0.2.2",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Angry Creative AB",
+      "email": "hej@angrycreative.se",
+      "homepage": "https://angrycreative.se"
+    },
+    {
+      "name": "Richard Sweeney",
+      "email": "richard.sweeney@angrycreative.se",
+      "homepage": "https://angrycreative.se"
+    }
+  ],
+  "require": {
+    "php": ">=7.0"
+  }
+}
