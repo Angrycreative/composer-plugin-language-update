@@ -23,6 +23,7 @@
     "psr-4": {"AngryCreative\\": "src/AngryCreative"}
   },
   "require": {
-    "php": ">=7.0"
+    "php": ">=7.0",
+    "guzzlehttp/guzzle": "~6.0"
   }
 }
