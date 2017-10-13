@@ -20,7 +20,7 @@
     }
   ],
   "autoload": {
-    "classmap": ["PostUpdateLanguageUpdate.php"]
+    "psr-4": {"AngryCreative\\": "src/AngryCreative"}
   },
   "require": {
     "php": ">=7.0"
