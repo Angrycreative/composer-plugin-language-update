@@ -19,6 +19,9 @@
       "homepage": "https://angrycreative.se"
     }
   ],
+  "autoload": {
+    "psr-4": {"AngryCreative\\": "src/AngryCreative"}
+  },
   "require": {
     "php": ">=7.0"
   }
