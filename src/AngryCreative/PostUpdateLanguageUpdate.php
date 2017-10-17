@@ -8,55 +8,86 @@
 
 namespace AngryCreative;
 
-use Composer\Installer\PackageEvent;
-use GuzzleHttp\Client;
+require dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/autoload.php';
 
+use Composer\Installer\PackageEvent;
+
+/**
+ * Class PostUpdateLanguageUpdate
+ *
+ * @todo Handle Core t10ns
+ * @todo Handle Theme t10ns
+ * @todo Handle removal of Plugins and/or Themes
+ *
+ * @package AngryCreative
+ */
 class PostUpdateLanguageUpdate {
 
 	/**
 	 * @param PackageEvent $event
 	 */
-	public static function updateT10ns(PackageEvent $event)
-	{
-		$installedPackage = $event->getOperation()->getPackage();
+	public static function update_t10ns( PackageEvent $event ) {
+		$package = $event->getOperation()->getPackage();
 
-		if ('wordpress-plugin' === $installedPackage->getType()) {
-			self::updatePluginT10ns($installedPackage);
+		switch ( $package->getType() ) {
+			case 'wordpress-plugin':
+				$slug = str_replace( 'wpackagist-plugin/', '', $package->getName() );
+				self::update_plugin_t10ns( $event, $slug );
+				break;
+
+
+			case 'wordpress-theme':
+				$slug = str_replace( 'wpackagist-theme/', '', $package->getName() );
+				self::update_theme_t10ns( $event, $slug );
+				break;
+
 		}
 	}
 
 	/**
 	 * @param PackageEvent $event
+	 * @param string       $slug
 	 */
-	public static function removeT10ns(PackageEvent $event)
-	{
-		$installedPackage = $event->getOperation()->getPackage();
+	protected static function update_plugin_t10ns( PackageEvent $event, $slug ) {
+		try {
+			$plugin_t10ns = new Plugin( $slug );
+			$results      = $plugin_t10ns->fetch_t10ns();
 
-		$type = $installedPackage->getType();
-		$version = $installedPackage->getVersion();
-		$name = $installedPackage->getName();
+			if ( empty( $results ) ) {
+				$event->getID()->write( "No translations updated for package: {$slug}" );
 
-		var_dump( $type, $version, $name );
+			} else {
+				foreach ( $results as $result ) {
+					$event->getID()->write( "Updated translation {$result} for package: {$slug}" );
+				}
+			}
+		} catch ( \Exception $e ) {
+			$event->getID()->write( 'Error :( ' . $e->getMessage() );
+
+		}
 	}
 
 	/**
-	 * Get translations for a plugin.
+	 * @param PackageEvent $event
+	 * @param string       $slug
 	 *
-	 * @param $installedPackage
+	 * @todo Implement this!
 	 */
-	public static function updatePluginT10ns($installedPackage)
-	{
-		$plugin_slug = str_replace('wpackagist-plugin/', '', $installedPackage->getName());
+	protected static function update_theme_t10ns( PackageEvent $event, $slug ) {
+		// Do something!
+	}
 
-		$client = new Client([
-			'base_uri' => 'https://api.wordpress.org/translations/plugins/1.0/?slug=' . $plugin_slug,
-		]);
+	/**
+	 * @param PackageEvent $event
+	 */
+	public static function remove_t10ns( PackageEvent $event ) {
+		$package = $event->getOperation()->getPackage();
 
-		$response = $client->request('GET');
-		$response->getStatusCode();
+		$type    = $package->getType();
+		$version = $package->getVersion();
+		$name    = $package->getName();
 
-		$t10ns = json_decode($response->getBody());
-		var_dump($response->getStatusCode(), $t10ns);
+		//var_dump( $type, $version, $name );
 	}
 
 }
