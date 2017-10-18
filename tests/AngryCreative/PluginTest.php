@@ -8,8 +8,6 @@
 
 namespace AngryCreative;
 
-use AngryCreative\Plugin;
-
 /**
  * Class TestPlugin
  *
@@ -17,28 +15,30 @@ use AngryCreative\Plugin;
  */
 class PluginTest extends \PHPUnit_Framework_TestCase {
 
-	public function testMe() {
-		$this->assertTrue( true );
-	}
-
 	public function testPlugin() {
 		try {
+			$dir    = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages/plugins';
 			$plugin = new Plugin( 'redirection' );
+
+			$this->assertInternalType( 'array', $plugin->get_languages() );
+			$this->assertNotEmpty( $plugin->get_languages() );
+
+			$this->assertInternalType( 'array', $plugin->get_t10ns() );
+			$this->assertNotEmpty( $plugin->get_t10ns() );
+
+			$this->assertEquals( $dir, $plugin->get_dest_path( 'plugin' ) );
+
+			$result = $plugin->fetch_t10ns();
+			$this->assertInternalType( 'array', $result );
+			$this->assertNotEmpty( $result );
+
+			$this->assertFileExists( $dir );
+			$this->assertFileExists( $dir . '/redirection-sv_SE.mo' );
+			$this->assertFileExists( $dir . '/redirection-sv_SE.po' );
+
 		} catch ( \Exception $e ) {
 			var_dump( $e->getMessage() );
 		}
 	}
-
-	//public function plugin_test() {
-	//	try {
-	//		$plugin = new Plugin( 'redirection' );
-	//		$this->assertTrue( $plugin instanceof Plugin );
-	//
-			//$languages = $plugin->get_languages();
-			//$this->assertInternalType( 'array', $languages );
-			//$this->assertTrue( ! empty( $languages ) );
-
-		//} catch ( \Exception $e ) {}
-	//}
 
 }

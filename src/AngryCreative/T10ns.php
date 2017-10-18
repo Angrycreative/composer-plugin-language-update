@@ -59,8 +59,15 @@ class T10ns {
 	 * @return string path to the destination directory.
 	 * @throws \Exception
 	 */
-	protected function get_dest_path( $type ) {
-		$dest_path = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/uploads/languges';
+	public function get_dest_path( $type ) {
+		$dest_path = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages';
+
+		if ( ! file_exists( $dest_path ) ) {
+			$result = mkdir( $dest_path, 0775 );
+			if ( ! $result ) {
+				throw new \Exception( 'Failed to create directory at: ' . $dest_path );
+			}
+		}
 
 		switch ( $type ) {
 			case 'plugin' :
@@ -78,7 +85,7 @@ class T10ns {
 		$dest_path .= $path;
 
 		if ( ! file_exists( $dest_path ) ) {
-			$result = mkdir( $dest_path, 0664, true );
+			$result = mkdir( $dest_path, 0775 );
 			if ( ! $result ) {
 				throw new \Exception( 'Failed to create directory at: ' . $dest_path );
 			}
@@ -97,7 +104,7 @@ class T10ns {
 	 */
 	public function download_t10ns( $url ) {
 		$client   = new Client();
-		$tmp_name = tempnam( sys_get_temp_dir(), basename( $url ) );
+		$tmp_name = sys_get_temp_dir() . '/' . basename( $url );
 		$request  = $client->request( 'GET', $url, [
 			'sink' => $tmp_name,
 		] );

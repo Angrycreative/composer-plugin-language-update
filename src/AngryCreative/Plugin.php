@@ -50,17 +50,17 @@ class Plugin extends T10ns {
 		$this->slug    = $slug;
 		$this->version = $version;
 
-		//try {
-		//	$this->languages = $this->get_site_languages();
-		//} catch ( \Exception $e ) {
-		//	throw new \Exception( $e->getMessage() );
-		//}
+		try {
+			$this->languages = $this->get_site_languages();
+		} catch ( \Exception $e ) {
+			throw new \Exception( $e->getMessage() );
+		}
 
-		//try {
-		//	$this->t10ns = $this->get_available_t10ns();
-		//} catch ( \Exception $e ) {
-		//	throw new \Exception( $e->getMessage() );
-		//}
+		try {
+			$this->t10ns = $this->get_available_t10ns();
+		} catch ( \Exception $e ) {
+			throw new \Exception( $e->getMessage() );
+		}
 	}
 
 	/**
@@ -166,10 +166,11 @@ class Plugin extends T10ns {
 			try {
 				$t10n_files = $this->download_t10ns( $package_url );
 				$zip        = new ZipArchive();
-				$result     = $zip->open( $t10n_files );
 
-				if ( true === $result ) {
-					$zip->extractTo( $dest_path );
+				if ( true === $zip->open( $t10n_files ) ) {
+					for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+						$zip->extractTo( $dest_path, [ $zip->getNameIndex( $i ) ] );
+					}
 					$zip->close();
 
 				} else {
