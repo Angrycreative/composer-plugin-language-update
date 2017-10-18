@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="tests/bootstrap.php" colors="true">
+<phpunit bootstrap="vendor/autoload.php" colors="true">
     <testsuites>
-        <testsuite name="Angry Creative Test Suite">
-            <directory>tests/</directory>
+        <testsuite name="ProjectRoot Test Suite">
+            <directory>./tests/AngryCreative</directory>
         </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src/AngryCreative/</directory>
-        </whitelist>
-    </filter>
 </phpunit>
