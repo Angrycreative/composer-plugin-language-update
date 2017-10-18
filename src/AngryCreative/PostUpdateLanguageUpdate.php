@@ -54,15 +54,15 @@ class PostUpdateLanguageUpdate {
 			$results      = $plugin_t10ns->fetch_t10ns();
 
 			if ( empty( $results ) ) {
-				$event->getID()->write( "No translations updated for package: {$slug}" );
+				echo "No translations updated for package: {$slug}";
 
 			} else {
 				foreach ( $results as $result ) {
-					$event->getID()->write( "Updated translation {$result} for package: {$slug}" );
+					echo "Updated translation {$result} for package: {$slug}";
 				}
 			}
 		} catch ( \Exception $e ) {
-			$event->getID()->write( 'Error :( ' . $e->getMessage() );
+			echo 'Error :( ' . $e->getMessage();
 
 		}
 	}
