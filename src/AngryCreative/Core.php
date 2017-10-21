@@ -2,25 +2,20 @@
 /**
  * Created by PhpStorm.
  * User: richardsweeney
- * Date: 2017-10-15
- * Time: 15:44
+ * Date: 2017-10-21
+ * Time: 13:52
  */
 
 namespace AngryCreative;
 
 use GuzzleHttp\Client;
 
-class Plugin extends T10ns {
+class Core extends T10ns {
 
 	/**
 	 * @var string Plugin t10ns API url.
 	 */
-	protected $api_url = 'https://api.wordpress.org/translations/plugins/1.0/';
-
-	/**
-	 * @var string
-	 */
-	protected $slug;
+	protected $api_url = 'https://api.wordpress.org/translations/core/1.0/';
 
 	/**
 	 * @var float|string
@@ -38,15 +33,13 @@ class Plugin extends T10ns {
 	protected $t10ns = [];
 
 	/**
-	 * PluginT10ns constructor.
+	 * Core constructor.
 	 *
-	 * @param string       $slug
-	 * @param float|string $version
+	 * @param string $version
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $slug, $version = '' ) {
-		$this->slug    = $slug;
+	public function __construct( $version = '' ) {
 		$this->version = $version;
 
 		try {
@@ -64,28 +57,11 @@ class Plugin extends T10ns {
 
 	/**
 	 * @return array
-	 */
-	public function get_languages() : array {
-		return $this->languages;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_t10ns() : array {
-		return $this->t10ns;
-	}
-
-	/**
-	 * Get a list of plugin t10ns via the API.
 	 *
 	 * @throws \Exception
-	 * @return array An array of plugin t10ns.
 	 */
 	protected function get_available_t10ns() : array {
-		$query = [
-			'slug' => $this->slug,
-		];
+		$query = [];
 		if ( ! empty( $this->version ) ) {
 			$query['version'] = $this->version;
 		}
@@ -109,8 +85,6 @@ class Plugin extends T10ns {
 	}
 
 	/**
-	 * Fetch all available t10ns for a plugin.
-	 *
 	 * @return array
 	 */
 	public function fetch_t10ns() : array {
@@ -118,10 +92,9 @@ class Plugin extends T10ns {
 
 		foreach ( $this->languages as $language ) {
 			try {
-				$result = $this->fetch_plugin_t10ns( $language );
-				if ( $result ) {
-					$results[] = $language;
-				}
+				$this->fetch_core_t10ns( $language );
+				$results[] = $language;
+
 			} catch ( \Exception $e ) {
 				// Maybe we should do something here?!
 			}
@@ -131,52 +104,49 @@ class Plugin extends T10ns {
 	}
 
 	/**
-	 * Fetch and move a plugins' t10ns to the correct
-	 * directory.
+	 * Fetch and move core t10ns to the correct directory.
 	 *
 	 * @param string $language Eg. 'sv_SE'.
 	 *
-	 * @return bool True if the t10ns could be downloaded, or false.
-	 *
 	 * @throws \Exception
 	 */
-	protected function fetch_plugin_t10ns( $language ) {
-		$has_updated = false;
+	protected function fetch_core_t10ns( $language ) {
 		foreach ( $this->t10ns as $t10n ) {
 			if ( $t10n->language !== $language ) {
 				continue;
 			}
 
 			try {
-				$this->download_plugin_t10ns( $t10n->package );
-				$has_updated = true;
+				$this->download_core_t10ns( $t10n->package );
 
 			} catch ( \Exception $e ) {
 				throw new \Exception( $e->getMessage() );
 
 			}
 		}
-
-		return $has_updated;
 	}
 
 	/**
-	 * @param string $package_url The URL to the package t10ns.
+	 * @param string $package_url
 	 *
 	 * @throws \Exception
 	 */
-	protected function download_plugin_t10ns( $package_url ) {
+	protected function download_core_t10ns( $package_url ) {
 		try {
-			$dest_path = $this->get_dest_path( 'plugin' );
+			$dest_path = $this->get_dest_path( 'core' );
 
 			try {
 				$t10n_files = $this->download_t10ns( $package_url );
+				$zip        = new \ZipArchive();
 
-				try {
-					$this->unpack_and_more_archived_t10ns( $t10n_files, $dest_path );
+				if ( true === $zip->open( $t10n_files ) ) {
+					for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+						$zip->extractTo( $dest_path, [ $zip->getNameIndex( $i ) ] );
+					}
+					$zip->close();
 
-				} catch ( \Exception $e ) {
-					throw new \Exception( $e->getMessage() );
+				} else {
+					throw new \Exception( 'The was an error unzipping or moving the t10n files' );
 
 				}
 			} catch ( \Exception $e ) {

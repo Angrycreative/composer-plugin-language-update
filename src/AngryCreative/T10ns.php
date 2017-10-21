@@ -12,7 +12,17 @@ use GuzzleHttp\Client;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
-class T10ns {
+abstract class T10ns {
+
+	/**
+	 * @return array
+	 */
+	abstract protected function get_available_t10ns() : array;
+
+	/**
+	 * @return array
+	 */
+	abstract public function fetch_t10ns() : array;
 
 	/**
 	 * Get the common.yml configuration file.
@@ -59,7 +69,7 @@ class T10ns {
 	 * @return string path to the destination directory.
 	 * @throws \Exception
 	 */
-	public function get_dest_path( $type ) {
+	public function get_dest_path( $type = 'plugin' ) {
 		$dest_path = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages';
 
 		if ( ! file_exists( $dest_path ) ) {
@@ -114,6 +124,30 @@ class T10ns {
 		}
 
 		return $tmp_name;
+	}
+
+	/**
+	 * @param string $t10n_files Path to the zipped t10n files.
+	 * @param string $dest_path  Path to expand the zipped files to.
+	 *
+	 * @throws \Exception
+	 */
+	public function unpack_and_more_archived_t10ns( $t10n_files, $dest_path ) {
+		$zip = new \ZipArchive();
+
+		if ( true === $zip->open( $t10n_files ) ) {
+			for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+				$ok = $zip->extractTo( $dest_path, [ $zip->getNameIndex( $i ) ] );
+				if ( false === $ok ) {
+					throw new \Exception( 'There was an error moving the translation to the destination directory' );
+				}
+			}
+			$zip->close();
+
+		} else {
+			throw new \Exception( 'The was an error unzipping or moving the t10n files' );
+
+		}
 	}
 
 }
