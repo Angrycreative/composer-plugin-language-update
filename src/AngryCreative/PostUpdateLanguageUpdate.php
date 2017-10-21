@@ -15,8 +15,6 @@ use Composer\Installer\PackageEvent;
 /**
  * Class PostUpdateLanguageUpdate
  *
- * @todo Handle Core t10ns
- * @todo Handle Theme t10ns
  * @todo Handle removal of Plugins and/or Themes
  *
  * @package AngryCreative

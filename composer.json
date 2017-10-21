@@ -1,8 +1,11 @@
 {
   "name": "ac-components/composer-plugin-language-update",
-  "description": "Update translations for a WP plugin after composer update.",
+  "description": "Update translations for WP core, themes and plugins where managed by composer.",
   "keywords": [
-    "WordPress"
+    "WordPress",
+    "Composer",
+    "Plugins",
+    "Themes"
   ],
   "homepage": "https://angrycreative.com",
   "version": "0.0.1",
@@ -29,5 +32,11 @@
   },
   "require-dev": {
     "phpunit/phpunit": "*"
+  },
+  "scripts": {
+    "test": [
+      "@composer install",
+      "phpunit"
+    ]
   }
 }
