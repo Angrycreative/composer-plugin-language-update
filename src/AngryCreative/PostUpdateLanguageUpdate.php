@@ -31,24 +31,22 @@ class PostUpdateLanguageUpdate {
 
 		switch ( $package->getType() ) {
 			case 'wordpress-plugin':
-				$slug    = str_replace( 'wpackagist-plugin/', '', $package->getName() );
-				$version = self::get_wp_standard_version_number( $package->getVersion() );
+				$slug = str_replace( 'wpackagist-plugin/', '', $package->getName() );
 
-				self::update_plugin_t10ns( $slug, $version );
+				self::update_plugin_t10ns( $slug, $package->getVersion() );
 				break;
 
 
 			case 'wordpress-theme':
-				$slug    = str_replace( 'wpackagist-theme/', '', $package->getName() );
-				$version = self::get_wp_standard_version_number( $package->getVersion() );
-				self::update_theme_t10ns( $slug, $version );
+				$slug = str_replace( 'wpackagist-theme/', '', $package->getName() );
+
+				self::update_theme_t10ns( $slug, $package->getVersion() );
 				break;
 
 			case 'package':
 				if ( 'johnpbloch/wordpress' === $package->getName() ) {
-					$version = self::get_wp_standard_version_number( $package->getVersion() );
 
-					self::update_core_t10ns( $version );
+					self::update_core_t10ns( $package->getVersion() );
 				}
 				break;
 
@@ -56,38 +54,20 @@ class PostUpdateLanguageUpdate {
 	}
 
 	/**
-	 * Ensure a version number has no more than 3 parts.
-	 *
-	 * @param string $version.
-	 *
-	 * @return string
-	 */
-	protected static function get_wp_standard_version_number( $version ) {
-		$version_parts = explode( '.', $version );
-
-		if ( count( $version_parts ) > 3 ) {
-			array_splice( $version_parts, 3 );
-		}
-
-		return implode( '.', $version_parts );
-	}
-
-	/**
 	 * @param string $slug    Plugin slug.
 	 * @param string $version Plugin version.
 	 */
 	protected static function update_plugin_t10ns( $slug, $version ) {
-
 		try {
 			$plugin_t10ns = new Plugin( $slug, $version );
 			$results      = $plugin_t10ns->fetch_t10ns();
 
 			if ( empty( $results ) ) {
-				echo "No translations updated for package: {$slug}" . PHP_EOL;
+				echo "No translations updated for plugin: {$slug}" . PHP_EOL;
 
 			} else {
 				foreach ( $results as $result ) {
-					echo "Updated translation {$result} for package: {$slug}" . PHP_EOL;
+					echo "Updated translation {$result} for plugin: {$slug}" . PHP_EOL;
 				}
 			}
 		} catch ( \Exception $e ) {
@@ -123,10 +103,24 @@ class PostUpdateLanguageUpdate {
 	/**
 	 * @param string $slug    Theme slug.
 	 * @param string $version Theme version.
-	 *
-	 * @todo Implement this!
 	 */
 	protected static function update_theme_t10ns( $slug, $version ) {
+		try {
+			$theme_t10ns = new Theme( $slug, $version );
+			$results     = $theme_t10ns->fetch_t10ns();
+
+			if ( empty( $results ) ) {
+				echo "No translations updated for theme: {$slug}" . PHP_EOL;
+
+			} else {
+				foreach ( $results as $result ) {
+					echo "Updated translation {$result} for theme: {$slug}" . PHP_EOL;
+				}
+			}
+		} catch ( \Exception $e ) {
+			echo 'Error :( ' . $e->getMessage() . PHP_EOL;
+
+		}
 	}
 
 	/**

@@ -148,7 +148,7 @@ class Plugin extends T10ns {
 			}
 
 			try {
-				$this->download_plugin_t10ns( $t10n->package );
+				$this->download_and_move_t10ns( 'plugin', $t10n->package );
 				$has_updated = true;
 
 			} catch ( \Exception $e ) {
@@ -158,35 +158,6 @@ class Plugin extends T10ns {
 		}
 
 		return $has_updated;
-	}
-
-	/**
-	 * @param string $package_url The URL to the package t10ns.
-	 *
-	 * @throws \Exception
-	 */
-	protected function download_plugin_t10ns( $package_url ) {
-		try {
-			$dest_path = $this->get_dest_path( 'plugin' );
-
-			try {
-				$t10n_files = $this->download_t10ns( $package_url );
-
-				try {
-					$this->unpack_and_more_archived_t10ns( $t10n_files, $dest_path );
-
-				} catch ( \Exception $e ) {
-					throw new \Exception( $e->getMessage() );
-
-				}
-			} catch ( \Exception $e ) {
-				throw new \Exception( $e->getMessage() );
-
-			}
-		} catch ( \Exception $e ) {
-			throw new \Exception( $e->getMessage() );
-
-		}
 	}
 
 }

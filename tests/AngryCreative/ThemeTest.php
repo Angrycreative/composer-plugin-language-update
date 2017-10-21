@@ -9,16 +9,16 @@
 namespace AngryCreative;
 
 /**
- * Class PluginTest
+ * Class ThemeTest
  *
  * @package AngryCreative
  */
-class PluginTest extends \PHPUnit_Framework_TestCase {
+class ThemeTest extends \PHPUnit_Framework_TestCase {
 
-	public function testPlugin() {
+	public function testTheme() {
 		try {
-			$dir    = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages/plugins';
-			$plugin = new Plugin( 'redirection' );
+			$dir    = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages/themes';
+			$plugin = new Theme( 'twentytwelve', '2.2.0.0' );
 
 			$this->assertInternalType( 'array', $plugin->get_languages() );
 			$this->assertNotEmpty( $plugin->get_languages() );
@@ -26,15 +26,15 @@ class PluginTest extends \PHPUnit_Framework_TestCase {
 			$this->assertInternalType( 'array', $plugin->get_t10ns() );
 			$this->assertNotEmpty( $plugin->get_t10ns() );
 
-			$this->assertEquals( $dir, $plugin->get_dest_path( 'plugin' ) );
+			$this->assertEquals( $dir, $plugin->get_dest_path( 'theme' ) );
 
 			$result = $plugin->fetch_t10ns();
 			$this->assertInternalType( 'array', $result );
 			$this->assertNotEmpty( $result );
 
 			$this->assertFileExists( $dir );
-			$this->assertFileExists( $dir . '/redirection-sv_SE.mo' );
-			$this->assertFileExists( $dir . '/redirection-sv_SE.po' );
+			$this->assertFileExists( $dir . '/twentytwelve-sv_SE.mo' );
+			$this->assertFileExists( $dir . '/twentytwelve-sv_SE.po' );
 
 		} catch ( \Exception $e ) {
 			var_dump( $e->getMessage() );

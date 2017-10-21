@@ -150,4 +150,29 @@ abstract class T10ns {
 		}
 	}
 
+
+	public function download_and_move_t10ns( $package_type = 'plugin', $package_url ) {
+		try {
+			$dest_path = $this->get_dest_path( $package_type );
+
+			try {
+				$t10n_files = $this->download_t10ns( $package_url );
+
+				try {
+					$this->unpack_and_more_archived_t10ns( $t10n_files, $dest_path );
+
+				} catch ( \Exception $e ) {
+					throw new \Exception( $e->getMessage() );
+
+				}
+			} catch ( \Exception $e ) {
+				throw new \Exception( $e->getMessage() );
+
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( $e->getMessage() );
+
+		}
+	}
+
 }

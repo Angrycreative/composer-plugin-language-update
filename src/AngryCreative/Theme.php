@@ -2,20 +2,25 @@
 /**
  * Created by PhpStorm.
  * User: richardsweeney
- * Date: 2017-10-21
- * Time: 13:52
+ * Date: 2017-10-15
+ * Time: 15:44
  */
 
 namespace AngryCreative;
 
 use GuzzleHttp\Client;
 
-class Core extends T10ns {
+class Theme extends T10ns {
 
 	/**
 	 * @var string Plugin t10ns API url.
 	 */
-	protected $api_url = 'https://api.wordpress.org/translations/core/1.0/';
+	protected $api_url = 'https://api.wordpress.org/translations/themes/1.0/';
+
+	/**
+	 * @var string
+	 */
+	protected $slug;
 
 	/**
 	 * @var float|string
@@ -33,13 +38,15 @@ class Core extends T10ns {
 	protected $t10ns = [];
 
 	/**
-	 * Core constructor.
+	 * PluginT10ns constructor.
 	 *
-	 * @param string $version
+	 * @param string       $slug
+	 * @param float|string $version
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $version = '' ) {
+	public function __construct( $slug, $version = '' ) {
+		$this->slug    = $slug;
 		$this->version = $version;
 
 		try {
@@ -57,11 +64,28 @@ class Core extends T10ns {
 
 	/**
 	 * @return array
+	 */
+	public function get_languages() : array {
+		return $this->languages;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_t10ns() : array {
+		return $this->t10ns;
+	}
+
+	/**
+	 * Get a list of theme t10ns via the API.
 	 *
 	 * @throws \Exception
+	 * @return array An array of theme t10ns.
 	 */
 	protected function get_available_t10ns() : array {
-		$query = [];
+		$query = [
+			'slug' => $this->slug,
+		];
 		if ( ! empty( $this->version ) ) {
 			$query['version'] = $this->version;
 		}
@@ -85,6 +109,8 @@ class Core extends T10ns {
 	}
 
 	/**
+	 * Fetch all available t10ns for a theme.
+	 *
 	 * @return array
 	 */
 	public function fetch_t10ns() : array {
@@ -92,9 +118,10 @@ class Core extends T10ns {
 
 		foreach ( $this->languages as $language ) {
 			try {
-				$this->fetch_core_t10ns( $language );
-				$results[] = $language;
-
+				$result = $this->fetch_theme_t10ns( $language );
+				if ( $result ) {
+					$results[] = $language;
+				}
 			} catch ( \Exception $e ) {
 				// Maybe we should do something here?!
 			}
@@ -104,26 +131,33 @@ class Core extends T10ns {
 	}
 
 	/**
-	 * Fetch and move core t10ns to the correct directory.
+	 * Fetch and move a themes' t10ns to the correct
+	 * directory.
 	 *
 	 * @param string $language Eg. 'sv_SE'.
 	 *
+	 * @return bool True if the t10ns could be downloaded, or false.
+	 *
 	 * @throws \Exception
 	 */
-	protected function fetch_core_t10ns( $language ) {
+	protected function fetch_theme_t10ns( $language ) {
+		$has_updated = false;
 		foreach ( $this->t10ns as $t10n ) {
 			if ( $t10n->language !== $language ) {
 				continue;
 			}
 
 			try {
-				$this->download_and_move_t10ns( 'core', $t10n->package );
+				$this->download_and_move_t10ns( 'theme', $t10n->package );
+				$has_updated = true;
 
 			} catch ( \Exception $e ) {
 				throw new \Exception( $e->getMessage() );
 
 			}
 		}
+
+		return $has_updated;
 	}
 
 }

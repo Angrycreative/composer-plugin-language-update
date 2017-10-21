@@ -9,7 +9,7 @@
 namespace AngryCreative;
 
 /**
- * Class TestPlugin
+ * Class CoreTest
  *
  * @package AngryCreative
  */
