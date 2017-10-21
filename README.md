@@ -1,16 +1,24 @@
 # Composer Auto Language Updates
 
-This package will automatically update translations for WordPress core and  plugins when you install or update via composer.
+This package will automatically update translations for WordPress core, themes & plugins when you install or update them via composer.*
 
-**Support for theme updates coming soon!**
+*\* This only works if the t10ns are available via the WordPress API*
 
-## How to
+## Installation instructions
 
-#### Add the repo as a composer dependency
+#### Add this repo as a composer dependency
 
-`composer require ac-components/composer-plugin-language-update:"dev-develop"`
+Add this .git repo to the `repositories` array to your `site\composer.json` 
 
-At the moment developement is taking place on develop. This will probably be updated to be `dev-master` at some point in the future.
+```json
+{
+    "type": "git",
+    "url": "https://git.synotio.se/ac-components/composer-plugin-language-update.git"
+}
+```
+Then run: `composer require ac-components/composer-plugin-language-update:"dev-develop"`
+
+At the moment developement is taking place on branch develop. This will probably be updated to be `dev-master` at some point in the future.
 
 #### Define the languages used on your site manually in `/site/conf/arguments/common.yml`
 
@@ -21,7 +29,7 @@ languages:
 ``` 
 We need to do this manually as this operation cannot rely on having a connection to the database available. The occurs, for example, when `composer update` is run via http://deploy.synotio.se/.
 
-#### Update your composer.json at `/site/composer.json` to include the following lines
+#### Update your `/site/composer.json` once again to include the following lines
 
 ```json
 "scripts": {
@@ -38,7 +46,7 @@ We need to do this manually as this operation cannot rely on having a connection
 
 cd into the packagage directory and run `composer install` then run `phpunit`. The tests will work best run in our CentOS enviroment.
 
-### Other stuff
+### WTF
 
 This only works if the t10ns are found on the WordPress API, eg:
 
