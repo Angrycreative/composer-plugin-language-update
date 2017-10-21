@@ -1,6 +1,6 @@
 # Composer Auto Language Updates
 
-This package will automatically update translations for plugins when you install or update a plugin via composer.
+This package will automatically update translations for WordPress core and  plugins when you install or update via composer.
 
 **Support for theme updates coming soon!**
 
