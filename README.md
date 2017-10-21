@@ -2,9 +2,7 @@
 
 This package will automatically update translations for plugins when you install or update a plugin via composer.
 
-**Coming soon:**
-
-Core support. Theme support.
+**Support for theme updates coming soon!**
 
 ## How to
 
@@ -21,7 +19,7 @@ languages:
   - 'sv_SE'
   - 'de_DE'
 ``` 
-As this operation cannot rely on having a connection to the database available (for example, if `composer update` is run via http://deploy.synotio.se/), the languages need to be defined manually here.
+We need to do this manually as this operation cannot rely on having a connection to the database available. The occurs, for example, when `composer update` is run via http://deploy.synotio.se/.
 
 #### Update your composer.json at `/site/composer.json` to include the following lines
 
