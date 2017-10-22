@@ -44,7 +44,7 @@ We need to do this manually as this operation cannot rely on having a connection
 
 ### Tests
 
-**HOLA!** The tests assume that `sv_SE` is set as a translations in the languages array of your `/site/conf/arguments/common.yml`. If this is not the case, the tests _will_ fail.
+**HOLA!** The tests assume that `sv_SE` is set one of the languages in the languages array of your `/site/conf/arguments/common.yml`. If this is not the case, the tests _will_ fail.
 
 If you're testing, you should probably remove the entire `wp-content/languages` directory. This will make sure the relevant directories are created when running the scripts.
 
