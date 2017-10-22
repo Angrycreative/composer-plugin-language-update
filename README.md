@@ -44,17 +44,19 @@ We need to do this manually as this operation cannot rely on having a connection
 
 ### Tests
 
-`cd` into the packagage directory and run `composer test`.
+**HOLA!** The tests assume that `sv_SE` is set as a translations in the languages array of your `/site/conf/arguments/common.yml`. If this is not the case, the tests _will_ fail.
 
 If you're testing, you should probably remove the entire `wp-content/languages` directory. This will make sure the relevant directories are created when running the scripts.
+
+Obviously you should probably do this on another branch other than master, so you don't remove t10ns accidentaly when you run the tests.
+
+`cd` into the packagage directory and run `composer test`.
 
 ### WTF
 
 #### I can not has translation plz?
 
-This only works if the t10ns are found on the WordPress API, eg:
-
-eg. https://api.wordpress.org/translations/plugins/1.0/?slug=redirection&version=2.7.3
+This only works if the t10ns are found on the WordPress API, eg. https://api.wordpress.org/translations/plugins/1.0/?slug=redirection&version=2.7.3
 
 #### I can haz clean up your shit?
 
