@@ -16,9 +16,9 @@ Add this .git repo to the `repositories` array in `site\composer.json`
     "url": "https://git.synotio.se/ac-components/composer-plugin-language-update.git"
 }
 ```
-Then run: `composer require ac-components/composer-plugin-language-update:"dev-develop"`*
+Then run: `composer require ac-components/composer-plugin-language-update:"*"`
 
-*\* At the moment developement is taking place on branch develop. This will probably be updated to be `dev-master` at some point in the future.*
+*At the moment developement is taking place on branch develop.*
 
 #### Define the languages used on your site manually in `/site/conf/arguments/common.yml`
 
