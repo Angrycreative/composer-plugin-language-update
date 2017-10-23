@@ -28,13 +28,15 @@ abstract class T10ns {
 	 *
 	 * This will also create the directory if if doesn't exist.
 	 *
-	 * @param string $type The object type.
+	 * @param string $type            The object type.
+	 * @param string $wp_content_path The path to the wp_content directory.
 	 *
 	 * @return string path to the destination directory.
+	 *
 	 * @throws \Exception
 	 */
-	public function get_dest_path( $type = 'plugin' ) {
-		$dest_path = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages';
+	public function get_dest_path( $type = 'plugin', $wp_content_path ) : string {
+		$dest_path = $wp_content_path . '/languages';
 
 		if ( ! file_exists( $dest_path ) ) {
 			$result = mkdir( $dest_path, 0775 );
@@ -43,6 +45,7 @@ abstract class T10ns {
 			}
 		}
 
+		$path = '';
 		switch ( $type ) {
 			case 'plugin' :
 				$path = '/plugins';
@@ -51,9 +54,6 @@ abstract class T10ns {
 			case 'theme' :
 				$path = '/themes';
 				break;
-
-			default :
-				$path = '';
 		}
 
 		$dest_path .= $path;
@@ -76,7 +76,7 @@ abstract class T10ns {
 	 * @throws \Exception
 	 * @return string Path to the downloaded files.
 	 */
-	public function download_t10ns( $url ) {
+	public function download_t10ns( $url ) : string {
 		$client   = new Client();
 		$tmp_name = sys_get_temp_dir() . '/' . basename( $url );
 		$request  = $client->request( 'GET', $url, [
@@ -96,7 +96,7 @@ abstract class T10ns {
 	 *
 	 * @throws \Exception
 	 */
-	public function unpack_and_more_archived_t10ns( $t10n_files, $dest_path ) {
+	public function unpack_and_more_archived_t10ns( $t10n_files, $dest_path ) : void {
 		$zip = new \ZipArchive();
 
 		if ( true === $zip->open( $t10n_files ) ) {
@@ -114,10 +114,18 @@ abstract class T10ns {
 		}
 	}
 
-
-	public function download_and_move_t10ns( $package_type = 'plugin', $package_url ) {
+	/**
+	 * Download t10ns, unzip them and move to the relevant directory.
+	 *
+	 * @param string $package_type    The package type, currently only 'plugin', 'theme', or 'core'.
+	 * @param string $package_url     The URL for the package t10ns.
+	 * @param string $wp_content_path The Path to the wp_content directory.
+	 *
+	 * @throws \Exception
+	 */
+	public function download_and_move_t10ns( $package_type = 'plugin', $package_url, $wp_content_path ) : void {
 		try {
-			$dest_path = $this->get_dest_path( $package_type );
+			$dest_path = $this->get_dest_path( $package_type, $wp_content_path );
 
 			try {
 				$t10n_files = $this->download_t10ns( $package_url );
@@ -127,15 +135,12 @@ abstract class T10ns {
 
 				} catch ( \Exception $e ) {
 					throw new \Exception( $e->getMessage() );
-
 				}
 			} catch ( \Exception $e ) {
 				throw new \Exception( $e->getMessage() );
-
 			}
 		} catch ( \Exception $e ) {
 			throw new \Exception( $e->getMessage() );
-
 		}
 	}
 

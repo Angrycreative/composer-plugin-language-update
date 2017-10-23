@@ -33,6 +33,11 @@ class Theme extends T10ns {
 	protected $languages = [];
 
 	/**
+	 * @var string
+	 */
+	protected $wp_content_path;
+
+	/**
 	 * @var array
 	 */
 	protected $t10ns = [];
@@ -43,13 +48,16 @@ class Theme extends T10ns {
 	 * @param string       $slug
 	 * @param float|string $version
 	 * @param array        $languages
+	 * @param string       $wp_content_path Path to wp-content.
+	 *
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $slug, $version = '', array $languages ) {
-		$this->slug      = $slug;
-		$this->version   = $version;
-		$this->languages = $languages;
+	public function __construct( $slug, $version = '', array $languages, $wp_content_path ) {
+		$this->slug            = $slug;
+		$this->version         = $version;
+		$this->languages       = $languages;
+		$this->wp_content_path = $wp_content_path;
 
 		try {
 			$this->t10ns = $this->get_available_t10ns();
@@ -130,7 +138,7 @@ class Theme extends T10ns {
 	 * Fetch and move a themes' t10ns to the correct
 	 * directory.
 	 *
-	 * @param string $language Eg. 'sv_SE'.
+	 * @param string $language (locale) Eg. 'sv_SE'.
 	 *
 	 * @return bool True if the t10ns could be downloaded, or false.
 	 *
@@ -144,7 +152,7 @@ class Theme extends T10ns {
 			}
 
 			try {
-				$this->download_and_move_t10ns( 'theme', $t10n->package );
+				$this->download_and_move_t10ns( 'theme', $t10n->package, $this->wp_content_path );
 				$has_updated = true;
 
 			} catch ( \Exception $e ) {

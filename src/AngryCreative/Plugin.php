@@ -20,6 +20,11 @@ class Plugin extends T10ns {
 	/**
 	 * @var string
 	 */
+	protected $package_type = 'plugin';
+
+	/**
+	 * @var string
+	 */
 	protected $slug;
 
 	/**
@@ -33,6 +38,11 @@ class Plugin extends T10ns {
 	protected $languages = [];
 
 	/**
+	 * @var string
+	 */
+	protected $wp_content_path;
+
+	/**
 	 * @var array
 	 */
 	protected $t10ns = [];
@@ -40,16 +50,22 @@ class Plugin extends T10ns {
 	/**
 	 * PluginT10ns constructor.
 	 *
-	 * @param string       $slug
-	 * @param float|string $version
-	 * @param array        $languages
+	 * @param string       $slug            Plugin slug.
+	 * @param float|string $version         Plugin version.
+	 * @param array        $languages       Array of languages.
+	 * @param string       $wp_content_path Path to wp-content.
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $slug, $version = '', array $languages ) {
-		$this->slug      = $slug;
-		$this->version   = $version;
-		$this->languages = $languages;
+	public function __construct( $slug, $version = '', array $languages, $wp_content_path ) {
+		$this->slug            = $slug;
+		$this->version         = $version;
+		$this->languages       = $languages;
+		$this->wp_content_path = $wp_content_path;
+
+		if ( empty( $this->languages ) || empty( $this->wp_content_path ) ) {
+			throw new \Exception( 'Languages or wp_content_path empty' );
+		}
 
 		try {
 			$this->t10ns = $this->get_available_t10ns();
@@ -144,7 +160,7 @@ class Plugin extends T10ns {
 			}
 
 			try {
-				$this->download_and_move_t10ns( 'plugin', $t10n->package );
+				$this->download_and_move_t10ns( 'plugin', $t10n->package, $this->wp_content_path );
 				$has_updated = true;
 
 			} catch ( \Exception $e ) {

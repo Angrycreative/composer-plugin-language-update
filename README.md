@@ -6,7 +6,7 @@ This package will automatically update translations for WordPress core, themes &
 
 ## Installation instructions
 
-#### Add this repo as a composer dependency
+##### Add this repo as a composer dependency
 
 Add this .git repo to the `repositories` array in `site\composer.json` 
 
@@ -18,24 +18,23 @@ Add this .git repo to the `repositories` array in `site\composer.json`
 ```
 Then run: `composer require ac-components/composer-plugin-language-update:"*"`
 
-*At the moment developement is taking place on branch develop.*
-
-#### Define the languages used on your site via the extras object at `/site/composer.json`
+##### Define the languages used on your site and the path to your wp-content directory via the extras object at `/site/composer.json`
 
 ```json
 "extra": {
-  "wordpress-languages": [ "sv_SE", "en_UK", "da_DK" ], 
+  "wordpress-languages": [ "sv_SE", "en_UK", "da_DK" ],
+  "wordpress-path-to-content-dir": "public/wp-content"
  }
 ``` 
 
-(We need to do this manually as this operation cannot rely on having a connection to the database available. The occurs, for example, when `composer update` is run via http://deploy.synotio.se/.)
+(We need to add a list of locales manually as this operation cannot rely on having a connection to the database available. The occurs, for example, when `composer update` is run via http://deploy.synotio.se/.)
 
-#### Update the scripts object in your `/site/composer.json` to include the following lines
+##### Update the scripts object in your `/site/composer.json` to include the following lines
 
 ```json
 "scripts": {
     "post-package-install": [
-        "AngryCreative\\PostUpdateLanguageUpdate::update_t10ns"
+        "AngryCreative\\PostUpdateLanguageUpdate::install_t10ns"
     ],
     "post-package-update": [
         "AngryCreative\\PostUpdateLanguageUpdate::update_t10ns"
@@ -51,9 +50,11 @@ Obviously you should probably do this on another branch other than master, so yo
 
 `cd` into the packagage directory and run `composer test`.
 
-### WTF
+**You may need to run the tests as root to avoid permissions errors when creating the directories.**
 
-#### I can not has translation plz?
+### WT(Actual)F
+
+#### I can has missing translation plz?
 
 This only works if the t10ns are found on the WordPress API, eg. https://api.wordpress.org/translations/plugins/1.0/?slug=redirection&version=2.7.3
 

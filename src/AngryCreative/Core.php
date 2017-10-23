@@ -28,6 +28,11 @@ class Core extends T10ns {
 	protected $languages = [];
 
 	/**
+	 * @var
+	 */
+	protected $wp_content_path;
+
+	/**
 	 * @var array
 	 */
 	protected $t10ns = [];
@@ -36,13 +41,15 @@ class Core extends T10ns {
 	 * Core constructor.
 	 *
 	 * @param string $version
-	 * @param array $languages
+	 * @param array  $languages
+	 * @param string $wp_content_path
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $version = '', array $languages ) {
-		$this->version   = $version;
-		$this->languages = $languages;
+	public function __construct( $version = '', array $languages, $wp_content_path ) {
+		$this->version         = $version;
+		$this->languages       = $languages;
+		$this->wp_content_path = $wp_content_path;
 
 		try {
 			$this->t10ns = $this->get_available_t10ns();
@@ -127,7 +134,7 @@ class Core extends T10ns {
 			}
 
 			try {
-				$this->download_and_move_t10ns( 'core', $t10n->package );
+				$this->download_and_move_t10ns( 'core', $t10n->package, $this->wp_content_path );
 
 			} catch ( \Exception $e ) {
 				throw new \Exception( $e->getMessage() );

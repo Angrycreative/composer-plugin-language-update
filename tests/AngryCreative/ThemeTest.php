@@ -16,29 +16,25 @@ namespace AngryCreative;
 class ThemeTest extends \PHPUnit_Framework_TestCase {
 
 	public function testTheme() {
-		try {
-			$dir    = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages/themes';
-			$plugin = new Theme( 'twentytwelve', '2.2.0.0', [ 'sv_SE' ] );
+		$dir    = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content';
+		$theme = new Theme( 'twentytwelve', '2.2.0.0', [ 'sv_SE' ], $dir );
 
-			$this->assertInternalType( 'array', $plugin->get_languages() );
-			$this->assertNotEmpty( $plugin->get_languages() );
+		$this->assertInternalType( 'array', $theme->get_languages() );
+		$this->assertNotEmpty( $theme->get_languages() );
+		$this->assertEquals( $theme->get_languages(), [ 'sv_SE' ] );
 
-			$this->assertInternalType( 'array', $plugin->get_t10ns() );
-			$this->assertNotEmpty( $plugin->get_t10ns() );
+		$this->assertInternalType( 'array', $theme->get_t10ns() );
+		$this->assertNotEmpty( $theme->get_t10ns() );
 
-			$this->assertEquals( $dir, $plugin->get_dest_path( 'theme' ) );
+		$this->assertEquals( $dir . '/languages/themes', $theme->get_dest_path( 'theme', $dir ) );
 
-			$result = $plugin->fetch_t10ns();
-			$this->assertInternalType( 'array', $result );
-			$this->assertNotEmpty( $result );
+		$result = $theme->fetch_t10ns();
+		$this->assertInternalType( 'array', $result );
+		$this->assertNotEmpty( $result );
 
-			$this->assertFileExists( $dir );
-			$this->assertFileExists( $dir . '/twentytwelve-sv_SE.mo' );
-			$this->assertFileExists( $dir . '/twentytwelve-sv_SE.po' );
-
-		} catch ( \Exception $e ) {
-			var_dump( $e->getMessage() );
-		}
+		$this->assertFileExists( $theme->get_dest_path( 'theme', $dir ) );
+		$this->assertFileExists( $theme->get_dest_path( 'theme', $dir ) . '/twentytwelve-sv_SE.mo' );
+		$this->assertFileExists( $theme->get_dest_path( 'theme', $dir ) . '/twentytwelve-sv_SE.po' );
 	}
 
 }
