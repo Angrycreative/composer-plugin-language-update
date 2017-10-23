@@ -18,7 +18,7 @@ class CoreTest extends \PHPUnit_Framework_TestCase {
 	public function testCore() {
 		try {
 			$dir  = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages';
-			$core = new Core( '4.8.2' );
+			$core = new Core( '4.8.2', [ 'sv_SE' ] );
 
 			$this->assertEquals( $dir, $core->get_dest_path( 'core' ) );
 

@@ -18,7 +18,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase {
 	public function testPlugin() {
 		try {
 			$dir    = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages/plugins';
-			$plugin = new Plugin( 'redirection' );
+			$plugin = new Plugin( 'redirection', '', [ 'sv_SE' ] );
 
 			$this->assertInternalType( 'array', $plugin->get_languages() );
 			$this->assertNotEmpty( $plugin->get_languages() );

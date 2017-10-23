@@ -20,16 +20,17 @@ Then run: `composer require ac-components/composer-plugin-language-update:"*"`
 
 *At the moment developement is taking place on branch develop.*
 
-#### Define the languages used on your site manually in `/site/conf/arguments/common.yml`
+#### Define the languages used on your site via the extras object at `/site/composer.json`
 
-```yaml
-languages:
-  - 'sv_SE'
-  - 'de_DE'
+```json
+"extra": {
+  "wordpress-languages": [ "sv_SE", "en_UK", "da_DK" ], 
+ }
 ``` 
-We need to do this manually as this operation cannot rely on having a connection to the database available. The occurs, for example, when `composer update` is run via http://deploy.synotio.se/.
 
-#### Update your `/site/composer.json` once again to include the following lines
+(We need to do this manually as this operation cannot rely on having a connection to the database available. The occurs, for example, when `composer update` is run via http://deploy.synotio.se/.)
+
+#### Update the scripts object in your `/site/composer.json` to include the following lines
 
 ```json
 "scripts": {
@@ -43,8 +44,6 @@ We need to do this manually as this operation cannot rely on having a connection
 ```
 
 ### Tests
-
-**HOLA!** The tests assume that `sv_SE` is set one of the languages in the languages array of your `/site/conf/arguments/common.yml`. If this is not the case, the tests _will_ fail.
 
 If you're testing, you should probably remove the entire `wp-content/languages` directory. This will make sure the relevant directories are created when running the scripts.
 

@@ -36,23 +36,33 @@ class Core extends T10ns {
 	 * Core constructor.
 	 *
 	 * @param string $version
+	 * @param array $languages
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $version = '' ) {
-		$this->version = $version;
-
-		try {
-			$this->languages = $this->get_site_languages();
-		} catch ( \Exception $e ) {
-			throw new \Exception( $e->getMessage() );
-		}
+	public function __construct( $version = '', array $languages ) {
+		$this->version   = $version;
+		$this->languages = $languages;
 
 		try {
 			$this->t10ns = $this->get_available_t10ns();
 		} catch ( \Exception $e ) {
 			throw new \Exception( $e->getMessage() );
 		}
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_languages() : array {
+		return $this->languages;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_t10ns() : array {
+		return $this->t10ns;
 	}
 
 	/**

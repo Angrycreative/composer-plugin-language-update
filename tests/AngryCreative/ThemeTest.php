@@ -18,7 +18,7 @@ class ThemeTest extends \PHPUnit_Framework_TestCase {
 	public function testTheme() {
 		try {
 			$dir    = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/public/wp-content/languages/themes';
-			$plugin = new Theme( 'twentytwelve', '2.2.0.0' );
+			$plugin = new Theme( 'twentytwelve', '2.2.0.0', [ 'sv_SE' ] );
 
 			$this->assertInternalType( 'array', $plugin->get_languages() );
 			$this->assertNotEmpty( $plugin->get_languages() );

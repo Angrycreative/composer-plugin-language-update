@@ -42,18 +42,14 @@ class Plugin extends T10ns {
 	 *
 	 * @param string       $slug
 	 * @param float|string $version
+	 * @param array        $languages
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $slug, $version = '' ) {
-		$this->slug    = $slug;
-		$this->version = $version;
-
-		try {
-			$this->languages = $this->get_site_languages();
-		} catch ( \Exception $e ) {
-			throw new \Exception( $e->getMessage() );
-		}
+	public function __construct( $slug, $version = '', array $languages ) {
+		$this->slug      = $slug;
+		$this->version   = $version;
+		$this->languages = $languages;
 
 		try {
 			$this->t10ns = $this->get_available_t10ns();

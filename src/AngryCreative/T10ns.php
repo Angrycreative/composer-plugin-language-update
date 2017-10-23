@@ -9,8 +9,6 @@
 namespace AngryCreative;
 
 use GuzzleHttp\Client;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 
 abstract class T10ns {
 
@@ -23,40 +21,6 @@ abstract class T10ns {
 	 * @return array
 	 */
 	abstract public function fetch_t10ns() : array;
-
-	/**
-	 * Get the common.yml configuration file.
-	 *
-	 * @return bool|string
-	 */
-	protected function get_site_language_config_file() {
-		return file_get_contents( dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) . '/conf/arguments/common.yml' );
-	}
-
-	/**
-	 * Get a list of languages on the site.
-	 *
-	 * @throws \Exception
-	 * @return false|array
-	 */
-	public function get_site_languages() {
-		$config_file = $this->get_site_language_config_file();
-		if ( ! $config_file ) {
-			throw new \Exception( 'Config file not found.' );
-		}
-
-		try {
-			$config = Yaml::parse( $config_file );
-		} catch ( ParseException $e ) {
-			throw new \Exception( $e->getMessage() );
-		}
-
-		if ( empty( $config['languages'] ) ) {
-			throw new \Exception( 'Languages not configured in common.yml' );
-		}
-
-		return $config['languages'];
-	}
 
 	/**
 	 * Get the destination path for a type of object: either
