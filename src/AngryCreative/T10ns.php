@@ -4,20 +4,63 @@
  * User: richardsweeney
  * Date: 2017-10-15
  * Time: 15:49
+ *
+ * @package AngryCreative
  */
 
 namespace AngryCreative;
 
 use GuzzleHttp\Client;
 
+/**
+ * Class T10ns
+ *
+ * @package AngryCreative
+ */
 abstract class T10ns {
 
 	/**
+	 * Get a list of available t10ns from the API.
+	 *
+	 * @param string      $api_url URL to the API for the package type.
+	 * @param string|null $version Package version.
+	 * @param string|null $slug Theme/Plugin slug.
+	 *
+	 * @throws \Exception
 	 * @return array
 	 */
-	abstract protected function get_available_t10ns() : array;
+	protected function get_available_t10ns( $api_url, $version = null, $slug = null ) : array {
+		$query = [];
+
+		if ( ! empty( $version ) ) {
+			$query['version'] = $version;
+		}
+
+		if ( ! empty( $slug ) ) {
+			$query['slug'] = $slug;
+		}
+
+		$client   = new Client();
+		$response = $client->request( 'GET', $api_url, [
+			'query' => $query,
+		] );
+
+		if ( 200 !== $response->getStatusCode() ) {
+			throw new \Exception( 'Got status code ' . $response->getStatusCode() );
+		}
+
+		$body = json_decode( $response->getBody() );
+
+		if ( empty( $body->translations ) ) {
+			throw new \Exception( 'No t10ns found' );
+		}
+
+		return $body->translations;
+	}
 
 	/**
+	 * Fetch the available t10ns for the relevant languages via the API.
+	 *
 	 * @return array
 	 */
 	abstract public function fetch_t10ns() : array;
@@ -31,9 +74,8 @@ abstract class T10ns {
 	 * @param string $type            The object type.
 	 * @param string $wp_content_path The path to the wp_content directory.
 	 *
-	 * @return string path to the destination directory.
-	 *
 	 * @throws \Exception
+	 * @return string path to the destination directory.
 	 */
 	public function get_dest_path( $type = 'plugin', $wp_content_path ) : string {
 		$dest_path = $wp_content_path . '/languages';
@@ -71,7 +113,7 @@ abstract class T10ns {
 	/**
 	 * Download a zipped file of t10ns.
 	 *
-	 * @param $url
+	 * @param string $url the URL to the zipped t10ns.
 	 *
 	 * @throws \Exception
 	 * @return string Path to the downloaded files.
@@ -91,12 +133,14 @@ abstract class T10ns {
 	}
 
 	/**
+	 * Unpack the downloaded t10ns and move to the correct path.
+	 *
 	 * @param string $t10n_files Path to the zipped t10n files.
 	 * @param string $dest_path  Path to expand the zipped files to.
 	 *
 	 * @throws \Exception
 	 */
-	public function unpack_and_more_archived_t10ns( $t10n_files, $dest_path ) : void {
+	public function unpack_and_more_archived_t10ns( $t10n_files, $dest_path ) {
 		$zip = new \ZipArchive();
 
 		if ( true === $zip->open( $t10n_files ) ) {
@@ -123,7 +167,7 @@ abstract class T10ns {
 	 *
 	 * @throws \Exception
 	 */
-	public function download_and_move_t10ns( $package_type = 'plugin', $package_url, $wp_content_path ) : void {
+	public function download_and_move_t10ns( $package_type = 'plugin', $package_url, $wp_content_path ) {
 		try {
 			$dest_path = $this->get_dest_path( $package_type, $wp_content_path );
 

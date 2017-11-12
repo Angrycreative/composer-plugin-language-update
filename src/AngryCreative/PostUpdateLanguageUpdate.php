@@ -4,6 +4,8 @@
  * User: richardsweeney
  * Date: 2017-10-13
  * Time: 08:04
+ *
+ * @package AngryCreative
  */
 
 namespace AngryCreative;
@@ -38,6 +40,8 @@ class PostUpdateLanguageUpdate {
 	protected static $event;
 
 	/**
+	 * Update t10ns when a package is installed
+	 *
 	 * @param PackageEvent $event
 	 */
 	public static function install_t10ns( PackageEvent $event ) {
@@ -53,6 +57,8 @@ class PostUpdateLanguageUpdate {
 	}
 
 	/**
+	 * Update t10ns when a package is updated
+	 *
 	 * @param PackageEvent $event
 	 */
 	public static function update_t10ns( PackageEvent $event ) {
@@ -187,6 +193,8 @@ class PostUpdateLanguageUpdate {
 	}
 
 	/**
+	 * Remove t10ns on uninstall.
+	 *
 	 * @param PackageEvent $event
 	 *
 	 * @todo maybe implement this?

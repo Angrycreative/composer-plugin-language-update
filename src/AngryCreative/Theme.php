@@ -4,52 +4,70 @@
  * User: richardsweeney
  * Date: 2017-10-15
  * Time: 15:44
+ *
+ * @package AngryCreative
  */
 
 namespace AngryCreative;
 
 use GuzzleHttp\Client;
 
+/**
+ * Class Theme
+ *
+ * @package AngryCreative
+ */
 class Theme extends T10ns {
 
 	/**
+	 * Theme t10ns API url.
+	 *
 	 * @var string Plugin t10ns API url.
 	 */
 	protected $api_url = 'https://api.wordpress.org/translations/themes/1.0/';
 
 	/**
+	 * Theme slug, eg 'twenty-seventeen'.
+	 *
 	 * @var string
 	 */
 	protected $slug;
 
 	/**
+	 * Theme version.
+	 *
 	 * @var float|string
 	 */
 	protected $version;
 
 	/**
+	 * Array of languages availale on the current site.
+	 *
 	 * @var array
 	 */
 	protected $languages = [];
 
 	/**
+	 * Path to the wp-content directory.
+	 *
 	 * @var string
 	 */
 	protected $wp_content_path;
 
 	/**
+	 * A list of available t10s.
+	 *
 	 * @var array
 	 */
 	protected $t10ns = [];
 
 	/**
-	 * PluginT10ns constructor.
+	 * Theme constructor.
 	 *
-	 * @param string       $slug
-	 * @param float|string $version
-	 * @param array        $languages
+	 * @param string       $slug            Theme slug.
+	 * @param float|string $version         Theme version.
+	 * @param array        $languages       Array of languages.
 	 * @param string       $wp_content_path Path to wp-content.
-	 *
 	 *
 	 * @throws \Exception
 	 */
@@ -60,7 +78,7 @@ class Theme extends T10ns {
 		$this->wp_content_path = $wp_content_path;
 
 		try {
-			$this->t10ns = $this->get_available_t10ns();
+			$this->t10ns = $this->get_available_t10ns( $this->api_url, $this->version, $this->slug );
 		} catch ( \Exception $e ) {
 			throw new \Exception( $e->getMessage() );
 		}
@@ -78,38 +96,6 @@ class Theme extends T10ns {
 	 */
 	public function get_t10ns() : array {
 		return $this->t10ns;
-	}
-
-	/**
-	 * Get a list of theme t10ns via the API.
-	 *
-	 * @throws \Exception
-	 * @return array An array of theme t10ns.
-	 */
-	protected function get_available_t10ns() : array {
-		$query = [
-			'slug' => $this->slug,
-		];
-		if ( ! empty( $this->version ) ) {
-			$query['version'] = $this->version;
-		}
-
-		$client   = new Client();
-		$response = $client->request( 'GET', $this->api_url, [
-			'query' => $query,
-		] );
-
-		if ( 200 !== $response->getStatusCode() ) {
-			throw new \Exception( 'Got status code ' . $response->getStatusCode() );
-		}
-
-		$body = json_decode( $response->getBody() );
-
-		if ( empty( $body->translations ) ) {
-			throw new \Exception( 'No t10ns found' );
-		}
-
-		return $body->translations;
 	}
 
 	/**
@@ -144,7 +130,7 @@ class Theme extends T10ns {
 	 *
 	 * @throws \Exception
 	 */
-	protected function fetch_theme_t10ns( $language ) {
+	protected function fetch_theme_t10ns( $language ) : bool {
 		$has_updated = false;
 		foreach ( $this->t10ns as $t10n ) {
 			if ( $t10n->language !== $language ) {

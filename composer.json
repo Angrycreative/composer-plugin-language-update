@@ -36,6 +36,9 @@
     "test": [
       "@composer install",
       "phpunit"
+    ],
+    "tests": [
+      "@composer run test"
     ]
   }
 }
