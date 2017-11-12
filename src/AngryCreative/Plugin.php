@@ -4,51 +4,70 @@
  * User: richardsweeney
  * Date: 2017-10-15
  * Time: 15:44
+ *
+ * @package AngryCreative
  */
 
 namespace AngryCreative;
 
 use GuzzleHttp\Client;
 
+/**
+ * Class Plugin
+ */
 class Plugin extends T10ns {
 
 	/**
-	 * @var string Plugin t10ns API url.
+	 * Plugin t10ns API url.
+	 *
+	 * @var string
 	 */
 	protected $api_url = 'https://api.wordpress.org/translations/plugins/1.0/';
 
 	/**
+	 * The package type.
+	 *
 	 * @var string
 	 */
 	protected $package_type = 'plugin';
 
 	/**
+	 * The plugin slug, eg 'query-monitor'.
+	 *
 	 * @var string
 	 */
 	protected $slug;
 
 	/**
+	 * The plugin version.
+	 *
 	 * @var float|string
 	 */
 	protected $version;
 
 	/**
+	 * Array of languages availale on the current site.
+	 *
 	 * @var array
 	 */
 	protected $languages = [];
 
 	/**
+	 * Path to the wp-content directory.
+	 *
 	 * @var string
 	 */
 	protected $wp_content_path;
 
 	/**
+	 * A list of available t10s.
+	 *
 	 * @var array
 	 */
 	protected $t10ns = [];
 
 	/**
-	 * PluginT10ns constructor.
+	 * Plugin constructor.
 	 *
 	 * @param string       $slug            Plugin slug.
 	 * @param float|string $version         Plugin version.
@@ -68,7 +87,7 @@ class Plugin extends T10ns {
 		}
 
 		try {
-			$this->t10ns = $this->get_available_t10ns();
+			$this->t10ns = $this->get_available_t10ns( $this->api_url, $this->version, $this->slug );
 		} catch ( \Exception $e ) {
 			throw new \Exception( $e->getMessage() );
 		}
@@ -89,40 +108,9 @@ class Plugin extends T10ns {
 	}
 
 	/**
-	 * Get a list of plugin t10ns via the API.
-	 *
-	 * @throws \Exception
-	 * @return array An array of plugin t10ns.
-	 */
-	protected function get_available_t10ns() : array {
-		$query = [
-			'slug' => $this->slug,
-		];
-		if ( ! empty( $this->version ) ) {
-			$query['version'] = $this->version;
-		}
-
-		$client   = new Client();
-		$response = $client->request( 'GET', $this->api_url, [
-			'query' => $query,
-		] );
-
-		if ( 200 !== $response->getStatusCode() ) {
-			throw new \Exception( 'Got status code ' . $response->getStatusCode() );
-		}
-
-		$body = json_decode( $response->getBody() );
-
-		if ( empty( $body->translations ) ) {
-			throw new \Exception( 'No t10ns found' );
-		}
-
-		return $body->translations;
-	}
-
-	/**
 	 * Fetch all available t10ns for a plugin.
 	 *
+	 * @throws \Exception
 	 * @return array
 	 */
 	public function fetch_t10ns() : array {
@@ -148,11 +136,10 @@ class Plugin extends T10ns {
 	 *
 	 * @param string $language Eg. 'sv_SE'.
 	 *
-	 * @return bool True if the t10ns could be downloaded, or false.
-	 *
 	 * @throws \Exception
+	 * @return bool True if the t10ns could be downloaded, or false.
 	 */
-	protected function fetch_plugin_t10ns( $language ) {
+	protected function fetch_plugin_t10ns( $language ) : bool {
 		$has_updated = false;
 		foreach ( $this->t10ns as $t10n ) {
 			if ( $t10n->language !== $language ) {

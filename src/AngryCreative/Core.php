@@ -4,35 +4,52 @@
  * User: richardsweeney
  * Date: 2017-10-21
  * Time: 13:52
+ *
+ * @package AngryCreative
  */
 
 namespace AngryCreative;
 
 use GuzzleHttp\Client;
 
+/**
+ * Class Core
+ *
+ * @package AngryCreative
+ */
 class Core extends T10ns {
 
 	/**
-	 * @var string Plugin t10ns API url.
+	 * Core t10ns API url.
+	 *
+	 * @var string.
 	 */
 	protected $api_url = 'https://api.wordpress.org/translations/core/1.0/';
 
 	/**
+	 * Core version.
+	 *
 	 * @var float|string
 	 */
 	protected $version;
 
 	/**
+	 * Array of languages availale on the current site.
+	 *
 	 * @var array
 	 */
 	protected $languages = [];
 
 	/**
-	 * @var
+	 * Path to the wp-content directory.
+	 *
+	 * @var string
 	 */
 	protected $wp_content_path;
 
 	/**
+	 * A list of available t10s.
+	 *
 	 * @var array
 	 */
 	protected $t10ns = [];
@@ -40,9 +57,9 @@ class Core extends T10ns {
 	/**
 	 * Core constructor.
 	 *
-	 * @param string $version
-	 * @param array  $languages
-	 * @param string $wp_content_path
+	 * @param float|string $version         Core version.
+	 * @param array        $languages       Array of languages.
+	 * @param string       $wp_content_path Path to wp-content.
 	 *
 	 * @throws \Exception
 	 */
@@ -52,7 +69,7 @@ class Core extends T10ns {
 		$this->wp_content_path = $wp_content_path;
 
 		try {
-			$this->t10ns = $this->get_available_t10ns();
+			$this->t10ns = $this->get_available_t10ns( $this->api_url, $this->version );
 		} catch ( \Exception $e ) {
 			throw new \Exception( $e->getMessage() );
 		}
@@ -73,35 +90,8 @@ class Core extends T10ns {
 	}
 
 	/**
-	 * @return array
+	 * Fetch all available t10ns for Core.
 	 *
-	 * @throws \Exception
-	 */
-	protected function get_available_t10ns() : array {
-		$query = [];
-		if ( ! empty( $this->version ) ) {
-			$query['version'] = $this->version;
-		}
-
-		$client   = new Client();
-		$response = $client->request( 'GET', $this->api_url, [
-			'query' => $query,
-		] );
-
-		if ( 200 !== $response->getStatusCode() ) {
-			throw new \Exception( 'Got status code ' . $response->getStatusCode() );
-		}
-
-		$body = json_decode( $response->getBody() );
-
-		if ( empty( $body->translations ) ) {
-			throw new \Exception( 'No t10ns found' );
-		}
-
-		return $body->translations;
-	}
-
-	/**
 	 * @return array
 	 */
 	public function fetch_t10ns() : array {
@@ -126,8 +116,11 @@ class Core extends T10ns {
 	 * @param string $language Eg. 'sv_SE'.
 	 *
 	 * @throws \Exception
+	 * @return bool
 	 */
-	protected function fetch_core_t10ns( $language ) {
+	protected function fetch_core_t10ns( $language ) : bool {
+		$has_updated = false;
+
 		foreach ( $this->t10ns as $t10n ) {
 			if ( $t10n->language !== $language ) {
 				continue;
@@ -135,12 +128,15 @@ class Core extends T10ns {
 
 			try {
 				$this->download_and_move_t10ns( 'core', $t10n->package, $this->wp_content_path );
+				$has_updated = true;
 
 			} catch ( \Exception $e ) {
 				throw new \Exception( $e->getMessage() );
 
 			}
 		}
+
+		return $has_updated;
 	}
 
 }
