@@ -1,10 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: richardsweeney
- * Date: 2017-10-15
- * Time: 15:49
- *
  * @package AngryCreative
  */
 

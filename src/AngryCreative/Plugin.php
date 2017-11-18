@@ -1,16 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: richardsweeney
- * Date: 2017-10-15
- * Time: 15:44
- *
  * @package AngryCreative
  */
 
 namespace AngryCreative;
-
-use GuzzleHttp\Client;
 
 /**
  * Class Plugin

@@ -10,8 +10,6 @@
 
 namespace AngryCreative;
 
-use GuzzleHttp\Client;
-
 /**
  * Class Core
  *
