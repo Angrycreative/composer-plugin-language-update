@@ -62,7 +62,7 @@ class PostUpdateLanguageUpdate {
 
 		try {
 			self::set_config();
-			self::get_t10ns_for_package( self::$event->getOperation()->getInitialPackage() );
+			self::get_t10ns_for_package( self::$event->getOperation()->getTargetPackage() );
 
 		} catch ( \Exception $e ) {
 			self::$event->getIO()->writeError( $e->getMessage() );
