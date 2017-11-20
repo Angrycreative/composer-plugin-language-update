@@ -6,7 +6,7 @@ This package will automatically update translations for WordPress core, themes &
 
 ## Installation instructions
 
-#### 1 Add this repository as a composer dependency
+#### 1. Add this repository as a composer dependency
 
 First, add this .git repo to the `repositories` array in `site\composer.json` 
 
@@ -17,9 +17,9 @@ First, add this .git repo to the `repositories` array in `site\composer.json`
 }
 ```
 
-#### 2 Run: `composer require ac-components/composer-plugin-language-update:"*"`
+#### 2. Run: `composer require ac-components/composer-plugin-language-update:"*"`
 
-##### Define the languages used on your site and the path to your wp-content directory via the extras object at `/site/composer.json`
+#### 3. Define the languages used on your site and the path to your wp-content directory via the extras object at `/site/composer.json`
 
 ```json
 "extra": {
@@ -30,7 +30,7 @@ First, add this .git repo to the `repositories` array in `site\composer.json`
 
 We need to add a list of locales manually (ie, not check the database) as this operation cannot rely on having a connection to the database available.
 
-#### 3 Update the scripts object in your `/site/composer.json` to include the following lines
+#### 4. Update the scripts object in your `/site/composer.json` to include the following lines
 
 ```json
 "scripts": {
