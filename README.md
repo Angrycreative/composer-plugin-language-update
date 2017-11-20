@@ -2,7 +2,7 @@
 
 This package will automatically update translations for WordPress core, themes & plugins when you install or update them via composer.*
 
-*\* This only works if the t10ns are available via the WordPress API.*
+*\* This only works if the translations are available via the WordPress API.*
 
 ## Installation instructions
 
@@ -13,7 +13,7 @@ First, add this .git repo to the `repositories` array in `site\composer.json`
 ```json
 {
   "type": "git",
-  "url": "https://git.synotio.se/ac-components/composer-plugin-language-update.git"
+  "url": "https://github.com/Angrycreative/composer-plugin-language-update.git"
 }
 ```
 
@@ -23,12 +23,12 @@ First, add this .git repo to the `repositories` array in `site\composer.json`
 
 ```json
 "extra": {
-  "wordpress-languages": [ "sv_SE", "en_UK", "da_DK" ],
+  "wordpress-languages": [ "sv_SE", "en_GB", "da_DK" ],
   "wordpress-path-to-content-dir": "public/wp-content"
  }
 ``` 
 
-(We need to add a list of locales manually as this operation cannot rely on having a connection to the database available. The occurs, for example, when `composer update` is run via http://deploy.synotio.se/.)
+We need to add a list of locales manually (ie, not check the database) as this operation cannot rely on having a connection to the database available.
 
 #### 3 Update the scripts object in your `/site/composer.json` to include the following lines
 
@@ -43,7 +43,7 @@ First, add this .git repo to the `repositories` array in `site\composer.json`
 }
 ```
 
-That's it. Next time you run a `composer update|install` the t10ns for the affected packages will be installed automatically.
+That's it. Next time you run a `composer update|install` the t10ns for the relevant packages will be installed automatically.
 
 ### Tests
 
@@ -61,10 +61,6 @@ You **may** need to run the tests as root to avoid permissions errors when creat
 
 This only works if the t10ns are found on the WordPress API, eg. https://api.wordpress.org/translations/plugins/1.0/?slug=redirection&version=2.7.3
 
-#### I can haz clean up your shit?
+#### I can haz clean up after you?
 
-At the moment the translations are _not_ removed on `composer uninstall` but I might implement it if I ever get around to it. Pull requests welcome!
-
-#### Can i haz not add the list of languages manually?
-
-For Angry's automated builds, composer will have no access to the database, so this has to be configured manually. Sorry brah.
+At the moment the translations are _not_ removed on `composer uninstall`. Pull requests welcome!
