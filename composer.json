@@ -1,5 +1,5 @@
 {
-  "name": "ac-components/composer-plugin-language-update",
+  "name": "Angrycreative/composer-plugin-language-update",
   "description": "Update translations for WP core, themes and plugins where managed by composer.",
   "keywords": [
     "WordPress",
