@@ -21,7 +21,7 @@ First, add this .git repo to the `repositories` array in your sites main `compos
 
 #### 2. Require the package.
 
-Run `composer require ac-components/composer-plugin-language-update:"*"`.
+Run `composer require Angrycreative/composer-plugin-language-update:"*"`.
 
 #### 3. Define the languages used on your site and the path to your wp-content directory.
  
