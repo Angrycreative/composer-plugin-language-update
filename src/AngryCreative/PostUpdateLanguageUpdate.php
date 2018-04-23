@@ -109,22 +109,53 @@ class PostUpdateLanguageUpdate {
 	protected static function get_t10ns_for_package( PackageInterface $package ) {
 		switch ( $package->getType() ) {
 			case 'wordpress-plugin':
-				$slug = str_replace( 'wpackagist-plugin/', '', $package->getName() );
 
-				self::update_plugin_t10ns( $slug, $package->getVersion() );
+				$package_type = 'plugin';
+				$slug = str_replace( 'wpackagist-plugin/', '', $package->getName() );
 				break;
 
 			case 'wordpress-theme':
+				$package_type = 'theme';
 				$slug = str_replace( 'wpackagist-theme/', '', $package->getName() );
 
-				self::update_theme_t10ns( $slug, $package->getVersion() );
 				break;
 
 			case 'package':
 				if ( 'johnpbloch/wordpress' === $package->getName() ) {
-					self::update_core_t10ns( $package->getVersion() );
+					$package_type = 'core';
 				}
 				break;
+			default:
+				return;
+		}
+
+		self::update_package_t10ns( $package_type, $package->getVersion(), $slug );
+	}
+
+
+	/**
+	 * @param string $slug    Plugin slug.
+	 * @param string $version Plugin version.
+	 */
+	protected static function update_package_t10ns( $package_type, $version, $slug = '' ) {
+		try {
+			//$plugin_t10ns = new Plugin( $slug, $version, self::$languages, self::$wp_content_path );
+			//$results      = $plugin_t10ns->fetch_t10ns();
+
+
+			$t10ns   = new T10ns( $package_type, $slug, $version, self::$languages, self::$wp_content_path );
+			$results = $t10ns->fetch_all_t10ns();
+
+			if ( empty( $results ) ) {
+				self::$event->getIO()->write( "No translations updated for plugin: {$slug}" );
+
+			} else {
+				foreach ( $results as $result ) {
+					self::$event->getIO()->write( "Updated translation {$result} for plugin: {$slug}" );
+				}
+			}
+		} catch ( \Exception $e ) {
+			self::$event->getIO()->writeError( $e->getMessage() );
 
 		}
 	}
