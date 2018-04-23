@@ -6,8 +6,6 @@
 
 namespace AngryCreative;
 
-require dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/autoload.php';
-
 use Composer\Installer\PackageEvent;
 use Composer\Package\PackageInterface;
 
@@ -36,6 +34,17 @@ class PostUpdateLanguageUpdate {
 	protected static $event;
 
 	/**
+	 * Require composer autoloader
+	 *
+	 * @param PackageEvent $event
+	 */
+	public static function require_autoloader( PackageEvent $event ) {
+		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+		require_once $vendorDir . '/autoload.php';
+	}
+
+
+	/**
 	 * Update t10ns when a package is installed
 	 *
 	 * @param PackageEvent $event
@@ -44,6 +53,7 @@ class PostUpdateLanguageUpdate {
 		self::$event = $event;
 
 		try {
+			self::require_autoloader( $event );
 			self::set_config();
 			self::get_t10ns_for_package( self::$event->getOperation()->getPackage() );
 
@@ -61,6 +71,7 @@ class PostUpdateLanguageUpdate {
 		self::$event = $event;
 
 		try {
+			self::require_autoloader( $event );
 			self::set_config();
 			self::get_t10ns_for_package( self::$event->getOperation()->getTargetPackage() );
 
