@@ -12,7 +12,162 @@ use GuzzleHttp\Client;
  *
  * @package AngryCreative
  */
-abstract class T10ns {
+class T10ns {
+
+	/**
+	 * Theme t10ns API url.
+	 *
+	 * @var string Plugin t10ns API url.
+	 */
+	protected $api_url = 'https://api.wordpress.org/translations/%s/1.0/';
+
+	/**
+	 * The package type.
+	 *
+	 * @var string
+	 */
+	protected $package_type = '';
+
+	/**
+	 * Theme slug, eg 'twenty-seventeen'.
+	 *
+	 * @var string
+	 */
+	protected $slug;
+
+	/**
+	 * Theme version.
+	 *
+	 * @var float|string
+	 */
+	protected $version;
+
+	/**
+	 * Array of languages availale on the current site.
+	 *
+	 * @var array
+	 */
+	protected $languages = [];
+
+	/**
+	 * Path to the wp-content directory.
+	 *
+	 * @var string
+	 */
+	protected $wp_content_path;
+
+	/**
+	 * A list of available t10s.
+	 *
+	 * @var array
+	 */
+	protected $t10ns = [];
+
+	/**
+	 * T10ns constructor.
+	 *
+	 * @param string       $slug            Theme slug.
+	 * @param float|string $version         Theme version.
+	 * @param array        $languages       Array of languages.
+	 * @param string       $wp_content_path Path to wp-content.
+	 *
+	 * @throws \Exception
+	 */
+	public function __construct( $package_type, $slug, $version = '', array $languages, $wp_content_path ) {
+		$this->package_type    = $package_type;
+		$this->slug            = $slug;
+		$this->version         = $version;
+		$this->languages       = $languages;
+		$this->wp_content_path = $wp_content_path;
+
+		try {
+			$this->t10ns = $this->get_available_t10ns( $this->get_api_url(), $this->version, $this->slug );
+		} catch ( \Exception $e ) {
+			throw new \Exception( $e->getMessage() );
+		}
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_api_url() {
+
+		$type = $this->package_type;
+		if( $this->package_type === 'plugin' ) {
+			$type = 'plugins';
+		}
+		if( $this->package_type === 'theme' ) {
+			$type = 'themes';
+		}
+
+		return \sprintf( $this->api_url, $type );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_languages() : array {
+		return $this->languages;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_t10ns() : array {
+		return $this->t10ns;
+	}
+
+	/**
+	 * Fetch all available t10ns for a plugin.
+	 *
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function fetch_all_t10ns() : array {
+		$results = [];
+
+		foreach ( $this->languages as $language ) {
+			try {
+				$result = $this->fetch_t10ns_for_language( $language );
+				if ( $result ) {
+					$results[] = $language;
+				}
+			} catch ( \Exception $e ) {
+				// Maybe we should do something here?!
+			}
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Fetch and move a plugins' t10ns to the correct
+	 * directory.
+	 *
+	 * @param string $language Eg. 'sv_SE'.
+	 *
+	 * @throws \Exception
+	 * @return bool True if the t10ns could be downloaded, or false.
+	 */
+	protected function fetch_t10ns_for_language( $language ) : bool {
+		$has_updated = false;
+		foreach ( $this->t10ns as $t10n ) {
+			if ( $t10n->language !== $language ) {
+				continue;
+			}
+
+			try {
+				$this->download_and_move_t10ns( $this->package_type, $t10n->package, $this->wp_content_path );
+				$has_updated = true;
+
+			} catch ( \Exception $e ) {
+				throw new \Exception( $e->getMessage() );
+
+			}
+		}
+
+		return $has_updated;
+	}
 
 	/**
 	 * Get a list of available t10ns from the API.
@@ -52,13 +207,6 @@ abstract class T10ns {
 
 		return $body->translations;
 	}
-
-	/**
-	 * Fetch the available t10ns for the relevant languages via the API.
-	 *
-	 * @return array
-	 */
-	abstract public function fetch_t10ns() : array;
 
 	/**
 	 * Get the destination path for a type of object: either
