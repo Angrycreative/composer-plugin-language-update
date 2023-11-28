@@ -72,7 +72,7 @@ abstract class T10ns {
 	 * @throws \Exception
 	 * @return string path to the destination directory.
 	 */
-	public function get_dest_path( $type = 'plugin', $wp_content_path ) : string {
+	public function get_dest_path( $type, $wp_content_path ) : string {
 		$dest_path = $wp_content_path . '/languages';
 
 		if ( ! file_exists( $dest_path ) ) {
@@ -162,7 +162,7 @@ abstract class T10ns {
 	 *
 	 * @throws \Exception
 	 */
-	public function download_and_move_t10ns( $package_type = 'plugin', $package_url, $wp_content_path ) {
+	public function download_and_move_t10ns( $package_type, $package_url, $wp_content_path ) {
 		try {
 			$dest_path = $this->get_dest_path( $package_type, $wp_content_path );
 

@@ -61,7 +61,7 @@ class Core extends T10ns {
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $version = '', array $languages, $wp_content_path ) {
+	public function __construct( $version , array $languages, $wp_content_path ) {
 		$this->version         = $version;
 		$this->languages       = $languages;
 		$this->wp_content_path = $wp_content_path;
