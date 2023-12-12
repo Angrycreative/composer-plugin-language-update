@@ -69,7 +69,7 @@ class Plugin extends T10ns {
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( $slug, $version = '', array $languages, $wp_content_path ) {
+	public function __construct( $slug, $version, array $languages, $wp_content_path ) {
 		$this->slug            = $slug;
 		$this->version         = $version;
 		$this->languages       = $languages;
