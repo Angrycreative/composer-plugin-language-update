@@ -36,7 +36,7 @@ abstract class T10ns {
 		}
 
 		$client   = new Client();
-		$response = $client->request( 'GET', $api_url, [
+		$response = $client->get($api_url, [
 			'query' => $query,
 		] );
 
@@ -116,7 +116,7 @@ abstract class T10ns {
 	public function download_t10ns( $url ) : string {
 		$client   = new Client();
 		$tmp_name = sys_get_temp_dir() . '/' . basename( $url );
-		$request  = $client->request( 'GET', $url, [
+		$request  = $client->get($url, [
 			'sink' => $tmp_name,
 		] );
 
